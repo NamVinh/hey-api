@@ -105,13 +105,6 @@ export async function getSpec({
         };
       }
 
-      if (response.status === 304) {
-        return {
-          error: 'not-modified',
-          response,
-        };
-      }
-
       if (!response.ok && watch.isHeadMethodSupported) {
         // assume the server is no longer running
         // do nothing, it might be restarted later
@@ -123,6 +116,13 @@ export async function getSpec({
 
       if (watch.isHeadMethodSupported === undefined) {
         watch.isHeadMethodSupported = response.ok;
+      }
+
+      if (response.status === 304) {
+        return {
+          error: 'not-modified',
+          response,
+        };
       }
 
       if (hasChanged === undefined) {

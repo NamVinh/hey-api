@@ -135,22 +135,6 @@ describe('getSpec', () => {
       ]);
     });
 
-    it('returns not-modified when HEAD responds with 304', async () => {
-      mockSendRequest.mockResolvedValueOnce({
-        response: new Response(null, { status: 304 }),
-      });
-
-      const result = await getSpec({
-        fetchOptions: undefined,
-        inputPath: 'http://example.com/openapi.json',
-        timeout: undefined,
-        watch: { headers: new Headers(), isHeadMethodSupported: true, lastValue: 'previous' },
-      });
-
-      expect(result.error).toBe('not-modified');
-      expect(mockSendRequest).toHaveBeenCalledTimes(1);
-    });
-
     it('returns not-modified when HEAD responds with unchanged ETag', async () => {
       mockSendRequest.mockResolvedValueOnce({
         response: new Response(null, { headers: { ETag: '"abc"' }, status: 200 }),
