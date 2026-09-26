@@ -96,19 +96,19 @@ export async function getSpec({
           url: resolvedInput.path,
         });
 
-        if (request.response.status >= 300) {
-          return {
-            error: 'not-ok',
-            response: request.response,
-          };
-        }
-
         response = request.response;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         return {
           error: 'not-ok',
           response: new Response(message, { status: 500 }),
+        };
+      }
+
+      if (response.status === 304) {
+        return {
+          error: 'not-modified',
+          response,
         };
       }
 
@@ -123,13 +123,6 @@ export async function getSpec({
 
       if (watch.isHeadMethodSupported === undefined) {
         watch.isHeadMethodSupported = response.ok;
-      }
-
-      if (response.status === 304) {
-        return {
-          error: 'not-modified',
-          response,
-        };
       }
 
       if (hasChanged === undefined) {
